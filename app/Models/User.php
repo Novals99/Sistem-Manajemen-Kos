@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -22,6 +23,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'phone',
+        'avatar',
+        'is_active',
     ];
 
     /**
@@ -44,6 +49,46 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    // ── Role Helpers ─────────────────────────────────
+
+    public function isOwner(): bool
+    {
+        return $this->role === 'owner';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isResident(): bool
+    {
+        return $this->role === 'resident';
+    }
+
+    public function isStaff(): bool
+    {
+        return in_array($this->role, ['owner', 'admin']);
+    }
+
+    // ── Relationships ────────────────────────────────
+
+    public function tenant(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Tenant::class);
+    }
+
+    public function maintenancesReported(): HasMany
+    {
+        return $this->hasMany(Maintenance::class, 'reported_by');
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 }
