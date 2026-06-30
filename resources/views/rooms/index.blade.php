@@ -135,7 +135,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center py-8 text-cool-gray">No rooms found.</td>
+                            <td colspan="7" class="p-0 border-b-0">
+                                <x-empty-state 
+                                    icon="folder-open" 
+                                    title="No Rooms Found" 
+                                    message="Get started by adding your first room to the boarding house."
+                                    actionLabel="Add Room"
+                                    actionRoute="{{ route('rooms.create') }}"
+                                />
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

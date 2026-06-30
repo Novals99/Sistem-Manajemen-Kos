@@ -43,7 +43,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
-         class="relative w-full {{ $maxWidthClass }} mx-4 bg-white rounded-2xl shadow-xl overflow-hidden"
+         class="relative w-full {{ $maxWidthClass }} mx-4 bg-surface rounded-2xl shadow-xl overflow-hidden"
     >
         {{-- Header --}}
         @if($title)

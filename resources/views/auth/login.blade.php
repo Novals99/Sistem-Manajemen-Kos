@@ -80,7 +80,7 @@
                 {{-- Remember Me --}}
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-300 text-primary-500 focus:ring-primary-500/20">
+                        <input type="checkbox" name="remember" class="w-4 h-4 rounded border-gray-100 text-primary-500 focus:ring-primary-500/20">
                         <span class="text-sm text-cool-gray">Remember me</span>
                     </label>
                 </div>

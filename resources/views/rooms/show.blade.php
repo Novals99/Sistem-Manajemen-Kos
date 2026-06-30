@@ -133,7 +133,7 @@
                 @if($pendingMaint->count())
                     <div class="space-y-3">
                         @foreach($pendingMaint as $m)
-                            <div class="p-3 rounded-lg bg-gray-50">
+                            <div class="p-3 rounded-lg bg-surface-hover">
                                 <p class="text-sm font-semibold text-charcoal">{{ $m->title }}</p>
                                 <div class="flex items-center gap-2 mt-1">
                                     @php $pt = match($m->priority) { 'urgent'=>'danger','high'=>'warning','medium'=>'info',default=>'gray' }; @endphp

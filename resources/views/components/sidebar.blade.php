@@ -51,7 +51,7 @@
                 <a href="{{ $href }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
                           {{ $active
-                              ? 'bg-sidebar-active text-primary-600'
+                              ? 'bg-primary-50/80 text-primary-600 shadow-sm'
                               : 'text-cool-gray hover:bg-sidebar-hover hover:text-charcoal' }}"
                 >
                     {{-- Icon --}}
@@ -95,24 +95,56 @@
         @endforeach
     </nav>
 
-    {{-- User Profile (Bottom) --}}
-    <div class="p-3 border-t border-gray-100">
-        <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-sidebar-hover transition-colors duration-200">
-            <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm flex-shrink-0">
-                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+    {{-- User Profile (Bottom) with Dropdown --}}
+    <div class="p-3 border-t border-gray-100" x-data="{ userMenuOpen: false }">
+        <div class="relative">
+            <button @click="userMenuOpen = !userMenuOpen" @click.outside="userMenuOpen = false" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-sidebar-hover transition-colors duration-200">
+                <div class="w-9 h-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm flex-shrink-0">
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                </div>
+                <div class="flex-1 min-w-0 text-left">
+                    <p class="text-sm font-semibold text-charcoal truncate">{{ auth()->user()->name ?? 'User' }}</p>
+                    <p class="text-xs text-cool-gray truncate">{{ ucfirst(auth()->user()->role ?? 'resident') }}</p>
+                </div>
+                <svg class="w-4 h-4 text-cool-gray flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            
+            {{-- Dropdown Menu --}}
+            <div x-show="userMenuOpen" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-1"
+                 class="absolute bottom-full left-0 w-full mb-2 bg-dropdown rounded-xl shadow-lg border border-gray-100 py-1 overflow-hidden z-50"
+                 style="display: none;">
+                
+                {{-- Appearance --}}
+                <div class="px-4 py-3 border-b border-gray-100">
+                    <p class="text-[10px] font-bold text-cool-gray mb-2 uppercase tracking-wider">Appearance</p>
+                    <div class="flex items-center gap-2">
+                        <button @click="theme = 'light'" :class="theme === 'light' ? 'bg-primary-50 text-primary-600 border-primary-200' : 'bg-surface text-cool-gray border-gray-200'" class="flex-1 py-1.5 rounded-md border text-xs font-medium transition-colors flex items-center justify-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                            Light
+                        </button>
+                        <button @click="theme = 'dark'" :class="theme === 'dark' ? 'bg-primary-50 text-primary-600 border-primary-200' : 'bg-surface text-cool-gray border-gray-200'" class="flex-1 py-1.5 rounded-md border text-xs font-medium transition-colors flex items-center justify-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                            Dark
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Logout --}}
+                <div class="p-1">
+                    <button onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="w-full text-left px-3 py-2 text-sm text-danger-500 hover:bg-danger-50 hover:text-danger-600 rounded-md transition-colors flex items-center gap-2 font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        Log out
+                    </button>
+                </div>
             </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-charcoal truncate">{{ auth()->user()->name ?? 'User' }}</p>
-                <p class="text-xs text-cool-gray truncate">{{ ucfirst(auth()->user()->role ?? 'resident') }}</p>
-            </div>
-            <a href="{{ route('logout') }}"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-               class="text-cool-gray hover:text-danger-500 transition-colors"
-               title="Logout">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                </svg>
-            </a>
         </div>
     </div>
 

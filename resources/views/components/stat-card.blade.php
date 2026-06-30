@@ -25,7 +25,7 @@
             </svg>
         </span>
     </div>
-    <p class="text-2xl font-bold text-white">{{ $prefix }}{{ is_numeric($value) ? number_format($value) : $value }}</p>
+    <p class="text-3xl font-extrabold text-white mt-1">{{ $prefix }}{{ is_numeric($value) ? number_format($value) : $value }}</p>
     @if($trend || $subtitle)
         <div class="flex items-center gap-2 mt-2">
             @if($trend)
@@ -68,7 +68,7 @@
             </svg>
         </span>
     </div>
-    <p class="text-2xl font-bold text-charcoal">{{ $prefix }}{{ is_numeric($value) ? number_format($value) : $value }}</p>
+    <p class="text-3xl font-extrabold text-charcoal mt-1">{{ $prefix }}{{ is_numeric($value) ? number_format($value) : $value }}</p>
     @if($trend || $subtitle)
         <div class="flex items-center gap-2 mt-2">
             @if($trend)

@@ -80,7 +80,15 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center py-8 text-cool-gray">No tenants found.</td>
+                            <td colspan="5" class="p-0 border-b-0">
+                                <x-empty-state 
+                                    icon="users" 
+                                    title="No Tenants Found" 
+                                    message="You haven't added any tenants yet. Click below to register one."
+                                    actionLabel="Register Tenant"
+                                    actionRoute="{{ route('tenants.create') }}"
+                                />
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>

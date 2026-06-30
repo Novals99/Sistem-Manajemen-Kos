@@ -14,7 +14,10 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-surface" x-data="{ sidebarOpen: false }">
+<body class="min-h-screen bg-surface" 
+      x-data="{ sidebarOpen: false, theme: localStorage.getItem('theme') || 'light' }"
+      x-init="$watch('theme', val => localStorage.setItem('theme', val))"
+      :class="{ 'dark': theme === 'dark' }">
 
     {{-- Mobile Overlay --}}
     <div x-show="sidebarOpen"
