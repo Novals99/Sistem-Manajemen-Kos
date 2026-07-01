@@ -160,8 +160,12 @@
             </script>
 
             {{-- User Avatar (mobile) --}}
-            <div class="lg:hidden w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm">
-                {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+            <div class="lg:hidden w-8 h-8 rounded-full overflow-hidden bg-primary-100 flex items-center justify-center text-primary-600 font-semibold text-sm border border-border-theme/40">
+                @if(auth()->user() && auth()->user()->avatar)
+                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar" class="w-full h-full object-cover" />
+                @else
+                    {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
+                @endif
             </div>
         </div>
     </div>

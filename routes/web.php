@@ -11,6 +11,7 @@ use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+
+    // Profile
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
     // ── Owner-only Routes ────────────────────────────
     Route::middleware('role:owner')->group(function () {
