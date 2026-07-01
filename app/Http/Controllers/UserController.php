@@ -43,6 +43,14 @@ class UserController extends Controller
 
         ActivityLog::log('created_user', "User '{$user->name}' ({$user->role}) created", $user);
 
+        // Dispatch notifications (Owner only)
+        \App\Notifications\SystemNotification::sendToOwnerOnly(
+            'User Account Created',
+            "User '{$user->name}' ({$user->role}) has been created.",
+            'shield',
+            route('users.index')
+        );
+
         return redirect()->route('users.index')
             ->with('success', "User '{$user->name}' created successfully.");
     }
@@ -63,6 +71,14 @@ class UserController extends Controller
 
         ActivityLog::log('updated_user', "User '{$user->name}' updated", $user);
 
+        // Dispatch notifications (Owner only)
+        \App\Notifications\SystemNotification::sendToOwnerOnly(
+            'User Account Updated',
+            "User '{$user->name}' information has been updated.",
+            'shield',
+            route('users.index')
+        );
+
         return redirect()->route('users.index')
             ->with('success', "User '{$user->name}' updated successfully.");
     }
@@ -77,6 +93,14 @@ class UserController extends Controller
         $user->delete();
 
         ActivityLog::log('deleted_user', "User '{$name}' deleted");
+
+        // Dispatch notifications (Owner only)
+        \App\Notifications\SystemNotification::sendToOwnerOnly(
+            'User Account Deleted',
+            "User '{$name}' has been deleted from the system.",
+            'shield',
+            route('users.index')
+        );
 
         return redirect()->route('users.index')
             ->with('success', "User '{$name}' deleted successfully.");

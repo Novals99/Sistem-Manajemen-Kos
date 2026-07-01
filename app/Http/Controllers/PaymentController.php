@@ -71,6 +71,23 @@ class PaymentController extends Controller
 
         ActivityLog::log('payment_created', "Payment {$payment->payment_code} recorded — Rp " . number_format($payment->amount, 0, ',', '.'), $payment);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            $payment->status === 'paid' ? 'Payment Received' : 'Payment Pending',
+            "Payment {$payment->payment_code} of Rp " . number_format($payment->amount, 0, ',', '.') . " recorded for {$payment->tenant->name}.",
+            'credit-card',
+            route('payments.show', $payment)
+        );
+        if ($payment->tenant && $payment->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $payment->tenant->user,
+                $payment->status === 'paid' ? 'Payment Received' : 'Payment Submitted',
+                "Your payment {$payment->payment_code} of Rp " . number_format($payment->amount, 0, ',', '.') . " is {$payment->status}.",
+                'credit-card',
+                route('payments.show', $payment)
+            );
+        }
+
         return redirect()->route('payments.index')
             ->with('success', "Payment {$payment->payment_code} recorded successfully.");
     }
@@ -105,6 +122,23 @@ class PaymentController extends Controller
         $payment->update($validated);
 
         ActivityLog::log('payment_updated', "Payment {$payment->payment_code} status changed to {$payment->status}", $payment);
+
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Payment Status Updated',
+            "Payment {$payment->payment_code} status changed to {$payment->status}.",
+            'credit-card',
+            route('payments.show', $payment)
+        );
+        if ($payment->tenant && $payment->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $payment->tenant->user,
+                'Payment Status Updated',
+                "Your payment {$payment->payment_code} status has been updated to " . ucfirst($payment->status) . ".",
+                'credit-card',
+                route('payments.show', $payment)
+            );
+        }
 
         return redirect()->route('payments.show', $payment)
             ->with('success', "Payment {$payment->payment_code} updated successfully.");

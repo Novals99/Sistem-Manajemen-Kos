@@ -64,6 +64,23 @@ class BookingController extends Controller
 
         ActivityLog::log('created_booking', "Booking {$booking->booking_code} created for {$booking->tenant->name}", $booking);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'New Booking Created',
+            "Booking {$booking->booking_code} has been created for {$booking->tenant->name}.",
+            'calendar',
+            route('bookings.show', $booking)
+        );
+        if ($booking->tenant && $booking->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $booking->tenant->user,
+                'Booking Created',
+                "Your booking {$booking->booking_code} for Room {$room->room_number} is pending approval.",
+                'calendar',
+                route('bookings.show', $booking)
+            );
+        }
+
         return redirect()->route('bookings.index')
             ->with('success', "Booking {$booking->booking_code} created successfully.");
     }
@@ -137,6 +154,23 @@ class BookingController extends Controller
 
         ActivityLog::log('check_in', "{$booking->tenant->name} checked into Room {$booking->room->room_number}", $booking);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Tenant Checked In',
+            "{$booking->tenant->name} has checked into Room {$booking->room->room_number}.",
+            'calendar',
+            route('bookings.show', $booking)
+        );
+        if ($booking->tenant && $booking->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $booking->tenant->user,
+                'Booking Approved',
+                "Your booking {$booking->booking_code} has been approved. Welcome to Room {$booking->room->room_number}!",
+                'calendar',
+                route('bookings.show', $booking)
+            );
+        }
+
         return back()->with('success', "{$booking->tenant->name} has been checked in to Room {$booking->room->room_number}.");
     }
 
@@ -154,6 +188,23 @@ class BookingController extends Controller
 
         ActivityLog::log('check_out', "{$booking->tenant->name} checked out of Room {$booking->room->room_number}", $booking);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Tenant Checked Out',
+            "{$booking->tenant->name} has checked out of Room {$booking->room->room_number}.",
+            'calendar',
+            route('bookings.show', $booking)
+        );
+        if ($booking->tenant && $booking->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $booking->tenant->user,
+                'Checked Out',
+                "You have been checked out of Room {$booking->room->room_number}.",
+                'calendar',
+                route('bookings.show', $booking)
+            );
+        }
+
         return back()->with('success', "{$booking->tenant->name} has been checked out of Room {$booking->room->room_number}.");
     }
 
@@ -167,6 +218,23 @@ class BookingController extends Controller
         $booking->room->update(['status' => 'available']);
 
         ActivityLog::log('cancelled_booking', "Booking {$booking->booking_code} cancelled", $booking);
+
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Booking Cancelled',
+            "Booking {$booking->booking_code} has been cancelled.",
+            'calendar',
+            route('bookings.show', $booking)
+        );
+        if ($booking->tenant && $booking->tenant->user) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $booking->tenant->user,
+                'Booking Cancelled',
+                "Your booking {$booking->booking_code} has been cancelled.",
+                'calendar',
+                route('bookings.show', $booking)
+            );
+        }
 
         return back()->with('success', "Booking {$booking->booking_code} has been cancelled.");
     }

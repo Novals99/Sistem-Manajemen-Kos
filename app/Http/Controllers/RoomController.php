@@ -55,6 +55,14 @@ class RoomController extends Controller
 
         ActivityLog::log('created_room', "Room {$room->room_number} created", $room);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'New Room Created',
+            "Room {$room->room_number} (Floor {$room->floor}) has been created.",
+            'building',
+            route('rooms.show', $room)
+        );
+
         return redirect()->route('rooms.index')
             ->with('success', "Room {$room->room_number} created successfully.");
     }
@@ -79,6 +87,14 @@ class RoomController extends Controller
         $room->update($data);
 
         ActivityLog::log('updated_room', "Room {$room->room_number} updated", $room);
+
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Room Updated',
+            "Room {$room->room_number} information has been updated.",
+            'building',
+            route('rooms.show', $room)
+        );
 
         return redirect()->route('rooms.index')
             ->with('success', "Room {$room->room_number} updated successfully.");

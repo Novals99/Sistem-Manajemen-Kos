@@ -48,6 +48,14 @@ class TenantController extends Controller
 
         ActivityLog::log('created_tenant', "Tenant {$tenant->name} created", $tenant);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'New Tenant Registered',
+            "Tenant {$tenant->name} has been registered in the system.",
+            'users',
+            route('tenants.show', $tenant)
+        );
+
         return redirect()->route('tenants.index')
             ->with('success', "Tenant {$tenant->name} created successfully.");
     }

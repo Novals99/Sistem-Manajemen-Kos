@@ -61,6 +61,23 @@ class MaintenanceController extends Controller
 
         ActivityLog::log('created_maintenance', "Maintenance request '{$maintenance->title}' submitted for Room {$maintenance->room->room_number}", $maintenance);
 
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'New Maintenance Request',
+            "Maintenance request '{$maintenance->title}' submitted for Room {$maintenance->room->room_number}.",
+            'wrench',
+            route('maintenances.show', $maintenance)
+        );
+        if ($maintenance->reporter) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $maintenance->reporter,
+                'Maintenance Request Submitted',
+                "Your request '{$maintenance->title}' has been submitted.",
+                'wrench',
+                route('maintenances.show', $maintenance)
+            );
+        }
+
         return redirect()->route('maintenances.index')
             ->with('success', 'Maintenance request submitted successfully.');
     }
@@ -88,6 +105,23 @@ class MaintenanceController extends Controller
         $maintenance->update($data);
 
         ActivityLog::log('updated_maintenance', "Maintenance request '{$maintenance->title}' updated to {$maintenance->status}", $maintenance);
+
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Maintenance Request Updated',
+            "Maintenance request '{$maintenance->title}' updated to {$maintenance->status}.",
+            'wrench',
+            route('maintenances.show', $maintenance)
+        );
+        if ($maintenance->reporter) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $maintenance->reporter,
+                'Maintenance Request Updated',
+                "Your request '{$maintenance->title}' status is now: " . ucfirst(str_replace('_', ' ', $maintenance->status)) . ".",
+                'wrench',
+                route('maintenances.show', $maintenance)
+            );
+        }
 
         return redirect()->route('maintenances.show', $maintenance)
             ->with('success', 'Maintenance request updated successfully.');
@@ -123,6 +157,23 @@ class MaintenanceController extends Controller
         ]);
 
         ActivityLog::log('resolved_maintenance', "Maintenance request '{$maintenance->title}' resolved", $maintenance);
+
+        // Dispatch notifications
+        \App\Notifications\SystemNotification::sendToOwnerAndAdmin(
+            'Maintenance Request Completed',
+            "Maintenance request '{$maintenance->title}' has been resolved.",
+            'wrench',
+            route('maintenances.show', $maintenance)
+        );
+        if ($maintenance->reporter) {
+            \App\Notifications\SystemNotification::sendToUser(
+                $maintenance->reporter,
+                'Maintenance Completed',
+                "Your request '{$maintenance->title}' has been resolved/completed.",
+                'wrench',
+                route('maintenances.show', $maintenance)
+            );
+        }
 
         return back()->with('success', 'Maintenance request marked as resolved.');
     }
