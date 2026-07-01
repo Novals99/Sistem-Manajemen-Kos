@@ -9,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-surface flex items-center justify-center p-4">
+<body class="min-h-screen bg-surface flex items-center justify-center p-4"
+      x-data="{ theme: localStorage.getItem('theme') || 'light' }"
+      :class="{ 'dark': theme === 'dark' }">
 
     <div class="w-full max-w-md">
         {{-- Logo --}}

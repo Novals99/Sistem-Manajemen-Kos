@@ -22,7 +22,16 @@
     
     --color-base-gray-50: #f9fafb;
     --color-base-gray-100: rgb(243,244,246);
+    --color-base-gray-200: #e5e7eb;
+    --color-base-gray-300: #d1d5db;
+    --color-base-gray-400: #9ca3af;
+    --color-base-gray-500: #6b7280;
+    --color-base-gray-600: #4b5563;
+    --color-base-gray-700: #374151;
     --color-base-gray-800: #1f2937;
+    --color-base-gray-900: #111827;
+    
+    --color-base-text-secondary: #4b5563;
     
     --color-base-badge-gray-bg: rgb(243,244,246);
     --color-base-btn-secondary-bg: rgb(243,244,246);
@@ -37,19 +46,29 @@
 }
 
 .dark {
+    color-scheme: dark;
     --color-base-charcoal: #F8FAFC;
     --color-base-cool-gray: #94A3B8;
     --color-base-surface: #1E293B;
     --color-base-surface-hover: #334155;
     --color-base-sidebar: #111827;
-    --color-base-sidebar-hover: #1E293B;
-    --color-base-sidebar-active: #1E293B;
+    --color-base-sidebar-hover: #334155;
+    --color-base-sidebar-active: #334155;
     --color-base-border: #334155;
     --color-base-border-hover: #475569;
 
     --color-base-gray-50: #1E293B;
     --color-base-gray-100: #334155;
+    --color-base-gray-200: #334155;
+    --color-base-gray-300: #475569;
+    --color-base-gray-400: #64748B;
+    --color-base-gray-500: #94A3B8;
+    --color-base-gray-600: #CBD5E1;
+    --color-base-gray-700: #CBD5E1;
     --color-base-gray-800: #F8FAFC;
+    --color-base-gray-900: #F8FAFC;
+    
+    --color-base-text-secondary: #CBD5E1;
     
     --color-base-badge-gray-bg: #334155;
     --color-base-btn-secondary-bg: #334155;
@@ -95,7 +114,16 @@
     /* Gray overrides */
     --color-gray-50: var(--color-base-gray-50);
     --color-gray-100: var(--color-base-gray-100);
+    --color-gray-200: var(--color-base-gray-200);
+    --color-gray-300: var(--color-base-gray-300);
+    --color-gray-400: var(--color-base-gray-400);
+    --color-gray-500: var(--color-base-gray-500);
+    --color-gray-600: var(--color-base-gray-600);
+    --color-gray-700: var(--color-base-gray-700);
     --color-gray-800: var(--color-base-gray-800);
+    --color-gray-900: var(--color-base-gray-900);
+
+    --color-text-secondary: var(--color-base-text-secondary);
 
     /* Badges */
     --color-success-50: #f0fdf4;
@@ -114,12 +142,16 @@
 
 .dark {
     --color-success-50: rgba(22, 163, 74, 0.15);
+    --color-success-500: #4ade80;
     --color-success-600: #4ade80;
     --color-warning-50: rgba(217, 119, 6, 0.15);
+    --color-warning-500: #fbbf24;
     --color-warning-600: #fbbf24;
     --color-danger-50: rgba(220, 38, 38, 0.15);
+    --color-danger-500: #f87171;
     --color-danger-600: #f87171;
     --color-info-50: rgba(37, 99, 235, 0.15);
+    --color-info-500: #60a5fa;
     --color-info-600: #60a5fa;
     --color-primary-50: rgba(227, 107, 45, 0.15);
 }
@@ -127,17 +159,77 @@
 /* ── Base Styles ──────────────────────────────────── */
 @layer base {
     body {
-        background-color: var(--color-base-body);
+        background-color: var(--color-base-body) !important;
         color: var(--color-charcoal);
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Global smooth theme transition */
+    body, 
+    aside, 
+    header, 
+    footer, 
+    .card, 
+    .card-hover, 
+    .table, 
+    .table th, 
+    .table td, 
+    .table tbody tr, 
+    .btn, 
+    .btn-primary, 
+    .btn-secondary, 
+    .btn-outline, 
+    .btn-ghost, 
+    .input, 
+    .select, 
+    .badge,
+    .modal,
+    dialog,
+    .dropdown {
+        transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1), 
+                    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1), 
+                    color 250ms cubic-bezier(0.4, 0, 0.2, 1), 
+                    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--color-base-cool-gray); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--color-base-charcoal); }
+
+    /* Custom scrollbar and modal behaviors */
+    dialog,
+    .modal {
+        background-color: var(--color-base-surface);
+        color: var(--color-charcoal);
+        border-color: var(--color-base-border);
+    }
+
+    textarea.input {
+        height: auto;
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+    }
+
+    input[type="checkbox"],
+    input[type="radio"] {
+        accent-color: var(--color-primary-500);
+        border-color: var(--color-base-border);
+        background-color: var(--color-base-surface);
+    }
+
+    .dark input[type="checkbox"],
+    .dark input[type="radio"] {
+        border-color: var(--color-base-border);
+        background-color: var(--color-base-surface);
+    }
+
+    /* Force dark background for bg-white elements under dark mode (e.g. pagination) */
+    .dark .bg-white {
+        background-color: var(--color-base-surface) !important;
+    }
 }
 
 /* ── Custom Utilities (TW4 way) ───────────────────── */
@@ -148,7 +240,6 @@
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
     border: 1px solid var(--color-base-border);
     padding: 1.5rem;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 @utility card-hover {
@@ -157,7 +248,6 @@
     box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
     border: 1px solid var(--color-base-border);
     padding: 1.5rem;
-    transition: all 0.2s;
     &:hover {
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
         border-color: var(--color-base-border-hover);
@@ -168,7 +258,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     &:focus { outline: none; box-shadow: 0 0 0 2px var(--color-base-body), 0 0 0 4px var(--color-primary-500); }
 }
 
@@ -176,7 +266,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     background-color: var(--color-primary-500); color: #fff;
     &:hover { background-color: var(--color-primary-600); }
     &:focus { outline: none; box-shadow: 0 0 0 2px var(--color-base-body), 0 0 0 4px var(--color-primary-500); }
@@ -186,7 +276,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     background-color: var(--color-base-btn-secondary-bg); color: var(--color-charcoal);
     &:hover { background-color: var(--color-base-btn-secondary-hover); }
 }
@@ -195,7 +285,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     background-color: var(--color-danger-500); color: #fff;
     &:hover { background-color: var(--color-danger-600); }
 }
@@ -204,7 +294,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     border: 2px solid var(--color-primary-500);
     color: var(--color-primary-500); background-color: transparent;
     &:hover { background-color: var(--color-primary-50); }
@@ -214,7 +304,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: 0.5rem; padding: 0.625rem 1rem; border-radius: 0.5rem;
     font-weight: 600; font-size: 0.875rem; line-height: 1.25rem;
-    transition: all 0.2s; cursor: pointer;
+    cursor: pointer;
     color: var(--color-cool-gray);
     &:hover { background-color: var(--color-base-btn-secondary-bg); color: var(--color-charcoal); }
 }
@@ -227,7 +317,7 @@
     border: 1px solid var(--color-base-border);
     background-color: var(--color-base-surface);
     color: var(--color-charcoal);
-    font-size: 0.875rem; transition: all 0.2s;
+    font-size: 0.875rem;
     &::placeholder { color: var(--color-cool-gray); opacity: 0.7; }
     &:focus { outline: none; border-color: var(--color-primary-500); box-shadow: 0 0 0 2px var(--color-base-body), 0 0 0 4px var(--color-primary-500); }
     &:hover:not(:focus) { border-color: var(--color-base-border-hover); }
@@ -244,7 +334,7 @@
     background-color: var(--color-base-surface); color: var(--color-charcoal);
     font-size: 0.875rem; appearance: none;
     background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20fill%3D%22none%22%20stroke%3D%22%238C8C8C%22%20stroke-width%3D%222%22%3E%3Cpath%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E');
-    background-size: 20px; background-position: right 12px center; background-repeat: no-repeat; transition: all 0.2s;
+    background-size: 20px; background-position: right 12px center; background-repeat: no-repeat;
     &:focus { outline: none; border-color: var(--color-primary-500); box-shadow: 0 0 0 2px var(--color-base-body), 0 0 0 4px var(--color-primary-500); }
     &:hover:not(:focus) { border-color: var(--color-base-border-hover); }
 }

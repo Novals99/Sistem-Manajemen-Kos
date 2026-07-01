@@ -127,15 +127,43 @@
                 
                 {{-- Appearance --}}
                 <div class="px-4 py-3 border-b border-gray-100">
-                    <p class="text-[10px] font-bold text-cool-gray mb-2 uppercase tracking-wider">Appearance</p>
-                    <div class="flex items-center gap-2">
-                        <button @click="theme = 'light'" :class="theme === 'light' ? 'bg-primary-50 text-primary-600 border-primary-200' : 'bg-surface text-cool-gray border-gray-200'" class="flex-1 py-1.5 rounded-md border text-xs font-medium transition-colors flex items-center justify-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                            Light
-                        </button>
-                        <button @click="theme = 'dark'" :class="theme === 'dark' ? 'bg-primary-50 text-primary-600 border-primary-200' : 'bg-surface text-cool-gray border-gray-200'" class="flex-1 py-1.5 rounded-md border text-xs font-medium transition-colors flex items-center justify-center gap-1">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                            Dark
+                    <p class="text-[10px] font-bold text-cool-gray mb-2.5 uppercase tracking-wider">Appearance</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-charcoal">Dark Mode</span>
+                        <button 
+                            type="button"
+                            @click="theme = theme === 'light' ? 'dark' : 'light'" 
+                            class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                            :class="theme === 'dark' ? 'bg-primary-500' : 'bg-gray-200'"
+                            role="switch" 
+                            :aria-checked="theme === 'dark' ? 'true' : 'false'"
+                        >
+                            <!-- Slidable Pill Ball -->
+                            <span 
+                                class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out"
+                                :class="theme === 'dark' ? 'translate-x-5' : 'translate-x-0'"
+                            >
+                                <!-- Sun Icon (Visible in Light Mode) -->
+                                <span 
+                                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                    :class="theme === 'dark' ? 'opacity-0 ease-out duration-100' : 'opacity-100 ease-in duration-200'"
+                                    aria-hidden="true"
+                                >
+                                    <svg class="h-3 w-3 text-warning-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464-4.95a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 1.414l-.707.707zm2.652 2.652a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 011.414-1.414l.707.707zM16 10a1 1 0 01-1-1h-1a1 1 0 110 2h1a1 1 0 011-1zm-3.05 4.95a1 1 0 111.414-1.414l.707.707a1 1 0 00-1.414 1.414l-.707-.707zm-2.652 2.652a1 1 0 101.414-1.414l-.707-.707a1 1 0 10-1.414 1.414l.707.707zM4 10a1 1 0 01-1-1H2a1 1 0 110 2h1a1 1 0 011-1zm1.05-4.95a1 1 0 10-1.414 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707zm7.07 10.606a1 1 0 11-1.414-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707z" clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                <!-- Moon Icon (Visible in Dark Mode) -->
+                                <span 
+                                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                    :class="theme === 'dark' ? 'opacity-100 ease-in duration-200' : 'opacity-0 ease-out duration-100'"
+                                    aria-hidden="true"
+                                >
+                                    <svg class="h-3 w-3 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                                    </svg>
+                                </span>
+                            </span>
                         </button>
                     </div>
                 </div>
