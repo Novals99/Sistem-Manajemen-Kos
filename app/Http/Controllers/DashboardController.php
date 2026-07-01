@@ -16,6 +16,17 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
+        // ── Resident Dashboard ──────────────────────────
+        if ($user->isResident()) {
+            return $this->residentDashboard($user);
+        }
+
+        // ── Staff Dashboard (Owner & Admin) ─────────────
+        return $this->staffDashboard();
+    }
+
+    private function staffDashboard(): View
+    {
         // Common stats
         $totalRooms = Room::count();
         $availableRooms = Room::where('status', 'available')->count();
@@ -69,4 +80,79 @@ class DashboardController extends Controller
             'occupancyRate',
         ));
     }
+
+    private function residentDashboard($user): View
+    {
+        $tenant = $user->tenant;
+
+        // Current active booking & room info
+        $activeBooking = $tenant
+            ? $tenant->bookings()->with('room')->where('status', 'active')->first()
+            : null;
+
+        $myRoom = $activeBooking?->room?->room_number ?? '—';
+        $bookingStatus = $activeBooking?->status ?? 'No Booking';
+        $contractEndDate = $activeBooking?->check_out_date
+            ?? ($activeBooking ? $activeBooking->check_in_date?->copy()->addMonths($activeBooking->duration_months) : null);
+
+        // Outstanding balance
+        $outstandingBalance = 0;
+        if ($tenant) {
+            $activeBookings = $tenant->bookings()->whereIn('status', ['active', 'pending', 'confirmed'])->get();
+            foreach ($activeBookings as $booking) {
+                $outstandingBalance += $booking->outstandingBalance();
+            }
+        }
+
+        // Next payment due
+        $nextPaymentDue = $tenant
+            ? Payment::where('tenant_id', $tenant->id)
+                ->where('status', 'pending')
+                ->orderBy('payment_date')
+                ->first()
+            : null;
+
+        // Maintenance counts
+        $openMaintenance = $user->maintenancesReported()
+            ->whereIn('status', ['reported', 'in_progress'])->count();
+        $closedMaintenance = $user->maintenancesReported()
+            ->where('status', 'resolved')->count();
+
+        // Personal tables
+        $myBookings = $tenant
+            ? Booking::with('room')
+                ->where('tenant_id', $tenant->id)
+                ->latest()
+                ->take(5)
+                ->get()
+            : collect();
+
+        $myPayments = $tenant
+            ? Payment::with(['booking.room'])
+                ->where('tenant_id', $tenant->id)
+                ->latest()
+                ->take(5)
+                ->get()
+            : collect();
+
+        $myMaintenances = Maintenance::with('room')
+            ->where('reported_by', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'myRoom',
+            'bookingStatus',
+            'contractEndDate',
+            'outstandingBalance',
+            'nextPaymentDue',
+            'openMaintenance',
+            'closedMaintenance',
+            'myBookings',
+            'myPayments',
+            'myMaintenances',
+        ));
+    }
 }
+

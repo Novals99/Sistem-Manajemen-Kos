@@ -1,5 +1,10 @@
 <x-layouts.app :title="'Dashboard'">
 
+@if(auth()->user()->isStaff())
+    {{-- ══════════════════════════════════════════════════════
+         STAFF DASHBOARD (Owner & Admin)
+         ══════════════════════════════════════════════════════ --}}
+
     {{-- Page Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
@@ -85,9 +90,7 @@
         <div class="card !p-0">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h3 class="font-bold text-charcoal">Recent Bookings</h3>
-                @if(auth()->user()->isStaff())
-                    <a href="#" class="btn-outline btn-sm">View All</a>
-                @endif
+                <a href="{{ route('bookings.index') }}" class="btn-outline btn-sm">View All</a>
             </div>
 
             @if($recentBookings->count())
@@ -136,9 +139,7 @@
         <div class="card !p-0">
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                 <h3 class="font-bold text-charcoal">Recent Payments</h3>
-                @if(auth()->user()->isStaff())
-                    <a href="#" class="btn-outline btn-sm">View All</a>
-                @endif
+                <a href="{{ route('payments.index') }}" class="btn-outline btn-sm">View All</a>
             </div>
 
             @if($recentPayments->count())
@@ -184,11 +185,10 @@
     </div>
 
     {{-- Room Availability Quick View --}}
-    @if(auth()->user()->isStaff())
     <div class="mt-6 card !p-0">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <h3 class="font-bold text-charcoal">Room Availability</h3>
-            <a href="#" class="btn-outline btn-sm">See Details</a>
+            <a href="{{ route('rooms.index') }}" class="btn-outline btn-sm">See Details</a>
         </div>
         <div class="p-6">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -211,6 +211,235 @@
             </div>
         </div>
     </div>
-    @endif
+
+@else
+    {{-- ══════════════════════════════════════════════════════
+         RESIDENT DASHBOARD (Personal)
+         ══════════════════════════════════════════════════════ --}}
+
+    {{-- Page Header --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div>
+            <h2 class="text-lg font-bold text-charcoal">My Dashboard</h2>
+            <p class="text-sm text-cool-gray">Welcome back, {{ auth()->user()->name }}! Here's your personal overview.</p>
+        </div>
+    </div>
+
+    {{-- KPI Cards --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <x-stat-card
+            label="My Room"
+            :value="$myRoom"
+            icon="room"
+            subtitle="Current room assignment"
+        />
+        <x-stat-card
+            label="Booking Status"
+            :value="ucfirst($bookingStatus)"
+            icon="booking"
+            :subtitle="$bookingStatus === 'active' ? 'Currently active' : ($bookingStatus === 'No Booking' ? 'No active booking' : 'Awaiting confirmation')"
+        />
+        <x-stat-card
+            label="Next Payment Due"
+            :value="$nextPaymentDue ? 'Rp ' . number_format($nextPaymentDue->amount, 0, ',', '.') : '—'"
+            icon="money"
+            :accent="$nextPaymentDue !== null"
+            :subtitle="$nextPaymentDue ? $nextPaymentDue->payment_date->format('d M Y') : 'No pending payments'"
+        />
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="card flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-danger-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-danger-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-charcoal">Rp {{ number_format($outstandingBalance, 0, ',', '.') }}</p>
+                <p class="text-xs text-cool-gray">Outstanding Balance</p>
+            </div>
+        </div>
+
+        <div class="card flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-info-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-info-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-charcoal">{{ $openMaintenance }} <span class="text-sm font-normal text-cool-gray">open</span> / {{ $closedMaintenance }} <span class="text-sm font-normal text-cool-gray">closed</span></p>
+                <p class="text-xs text-cool-gray">Maintenance Requests</p>
+            </div>
+        </div>
+
+        <div class="card flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-primary-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-bold text-charcoal">{{ $contractEndDate ? $contractEndDate->format('d M Y') : '—' }}</p>
+                <p class="text-xs text-cool-gray">Contract End Date</p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Personal Tables --}}
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
+        {{-- My Bookings --}}
+        <div class="card !p-0">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="font-bold text-charcoal">My Bookings</h3>
+                <a href="{{ route('bookings.index') }}" class="btn-outline btn-sm">View All</a>
+            </div>
+
+            @if($myBookings->count())
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Room</th>
+                                <th>Check In</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($myBookings as $booking)
+                                <tr>
+                                    <td class="font-mono text-xs">{{ $booking->booking_code }}</td>
+                                    <td>{{ $booking->room->room_number ?? '-' }}</td>
+                                    <td class="text-sm text-cool-gray">{{ $booking->check_in_date?->format('d M Y') ?? '-' }}</td>
+                                    <td>
+                                        @php
+                                            $statusType = match($booking->status) {
+                                                'active' => 'success',
+                                                'pending' => 'warning',
+                                                'confirmed' => 'info',
+                                                'completed' => 'gray',
+                                                'cancelled' => 'danger',
+                                                default => 'gray',
+                                            };
+                                        @endphp
+                                        <x-badge :type="$statusType" :dot="true">{{ ucfirst($booking->status) }}</x-badge>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="px-6 py-10 text-center text-sm text-cool-gray">
+                    No bookings yet.
+                </div>
+            @endif
+        </div>
+
+        {{-- My Payment History --}}
+        <div class="card !p-0">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="font-bold text-charcoal">My Payment History</h3>
+                <a href="{{ route('payments.index') }}" class="btn-outline btn-sm">View All</a>
+            </div>
+
+            @if($myPayments->count())
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($myPayments as $payment)
+                                <tr>
+                                    <td class="font-mono text-xs">{{ $payment->payment_code }}</td>
+                                    <td class="font-semibold">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
+                                    <td class="text-sm text-cool-gray">{{ $payment->payment_date?->format('d M Y') ?? '-' }}</td>
+                                    <td>
+                                        @php
+                                            $payStatusType = match($payment->status) {
+                                                'paid' => 'success',
+                                                'pending' => 'warning',
+                                                'failed' => 'danger',
+                                                'refunded' => 'info',
+                                                default => 'gray',
+                                            };
+                                        @endphp
+                                        <x-badge :type="$payStatusType" :dot="true">{{ ucfirst($payment->status) }}</x-badge>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="px-6 py-10 text-center text-sm text-cool-gray">
+                    No payments yet.
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- My Maintenance Requests --}}
+    <div class="card !p-0">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+            <h3 class="font-bold text-charcoal">My Maintenance Requests</h3>
+            <a href="{{ route('maintenances.index') }}" class="btn-outline btn-sm">View All</a>
+        </div>
+
+        @if($myMaintenances->count())
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Room</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($myMaintenances as $maintenance)
+                            <tr>
+                                <td class="font-semibold text-charcoal">{{ $maintenance->title }}</td>
+                                <td>{{ $maintenance->room->room_number ?? '-' }}</td>
+                                <td>
+                                    @php
+                                        $priorityType = match($maintenance->priority) {
+                                            'high' => 'danger',
+                                            'medium' => 'warning',
+                                            'low' => 'info',
+                                            default => 'gray',
+                                        };
+                                    @endphp
+                                    <x-badge :type="$priorityType" :dot="true">{{ ucfirst($maintenance->priority) }}</x-badge>
+                                </td>
+                                <td>
+                                    @php
+                                        $maintStatusType = match($maintenance->status) {
+                                            'reported' => 'warning',
+                                            'in_progress' => 'info',
+                                            'resolved' => 'success',
+                                            default => 'gray',
+                                        };
+                                    @endphp
+                                    <x-badge :type="$maintStatusType" :dot="true">{{ ucfirst(str_replace('_', ' ', $maintenance->status)) }}</x-badge>
+                                </td>
+                                <td class="text-sm text-cool-gray">{{ $maintenance->created_at->format('d M Y') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <div class="px-6 py-10 text-center text-sm text-cool-gray">
+                No maintenance requests yet.
+            </div>
+        @endif
+    </div>
+
+@endif
 
 </x-layouts.app>
+
